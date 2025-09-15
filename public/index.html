@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🔗 URL Shortener</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 80px;
+      background: #f9f9f9;
+    }
+    h2 {
+      color: #333;
+    }
+    input {
+      padding: 10px;
+      width: 300px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      margin-right: 5px;
+    }
+    button {
+      padding: 10px 15px;
+      border: none;
+      background: #007bff;
+      color: white;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    #result {
+      margin-top: 20px;
+      font-size: 18px;
+    }
+    a {
+      color: #007bff;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <h2>🔗 Simple URL Shortener</h2>
+
+  <input type="text" id="urlInput" placeholder="Enter long URL">
+  <button onclick="shortenUrl()">Shorten</button>
+
+  <p id="result"></p>
+
+  <script>
+    async function shortenUrl() {
+      const originalUrl = document.getElementById("urlInput").value; // ✅ fixed variable name
+      if (!originalUrl) {
+        alert("Please enter a URL");
+        return;
+      }
+
+      try {
+        const res = await fetch("http://localhost:3000/shorten", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ originalUrl }) // ✅ send correctly
+        });
+
+        const data = await res.json();
+        if (data.error) {
+          document.getElementById("result").innerText = "❌ " + data.error;
+        } else {
+          document.getElementById("result").innerHTML =
+            `✅ Short URL: <a href="${data.shortUrl}" target="_blank">${data.shortUrl}</a>`;
+        }
+      } catch (err) {
+        document.getElementById("result").innerText = "❌ Failed to shorten URL";
+        console.error(err);
+      }
+    }
+  </script>
+</body>
+</html>
